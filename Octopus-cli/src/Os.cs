@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Octopus_cli
+namespace Octopus_cli.src
 {
     internal class Os
     {
