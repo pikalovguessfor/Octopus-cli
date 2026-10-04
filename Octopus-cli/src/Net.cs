@@ -1,8 +1,10 @@
 ﻿namespace Octopus_cli.src
 {
-    public class OctoNet
+    public class Net
     {
         /*Public class to interact with internet*/
+
+
 
     }
 }

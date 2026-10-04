@@ -4,7 +4,8 @@
     {
         public static void Main(string[] args)
         {
-
+            _Logger Logger = new _Logger();
+            
             System.Console.WriteLine("Welcome to Octopus! Program to unlock steam dlc");
 
         }
