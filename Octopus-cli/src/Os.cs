@@ -2,7 +2,7 @@
 
 namespace Octopus_cli.src
 {
-    internal class Os
+    public class Os
     {
     }
 }
