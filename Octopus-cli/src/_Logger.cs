@@ -31,6 +31,12 @@ namespace Octopus_cli.src
             CreateDirectory("./Logs/");
             this._CurrentTime = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             this._PathToLog = "./Logs/" + _CurrentTime;
+
+            StreamWriter sw = new StreamWriter(_PathToLog);
+            sw.WriteLine(this._CurrentTime + Service._CurrentDirectory);
+            sw.WriteLine(Service._OperatingSystem);
+            sw.WriteLine("Curent version = " + Service._Version);
+            sw.Close();
         }
     }
 }
