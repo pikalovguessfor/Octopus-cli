@@ -1,18 +1,19 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 
 namespace Octopus_cli.src
 {
-    public class Steam
+    public class DlcIdsFromStore
     {
         private static readonly HttpClient _http = new HttpClient
         {
             Timeout = TimeSpan.FromSeconds(15)
         };
 
-        static Steam()
+        static DlcIdsFromStore()
         {
             _http.DefaultRequestHeaders.UserAgent.ParseAdd(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
@@ -20,7 +21,7 @@ namespace Octopus_cli.src
             _http.DefaultRequestHeaders.Accept.ParseAdd("application/json");
         }
 
-        public int[] GetDlcIds(int gameAppId)
+        public int[] GetDlcIds(int gameAppId, _Logger logger)
         {
             if (gameAppId <= 0)
                 throw new ArgumentOutOfRangeException(nameof(gameAppId));
@@ -34,6 +35,7 @@ namespace Octopus_cli.src
             }
             catch (HttpRequestException ex)
             {
+                logger.Write("Steam API request failed for AppID " + "(" + gameAppId + ")");
                 throw new Exception($"Steam API request failed for AppID {gameAppId}.", ex);
             }
 
@@ -42,6 +44,7 @@ namespace Octopus_cli.src
 
             if (root.ValueKind != JsonValueKind.Object)
             {
+                logger.Write("[Steam] Unexpected root kind: " + root.ValueKind);
                 Console.WriteLine($"[Steam] Unexpected root kind: {root.ValueKind}");
                 return Array.Empty<int>();
             }
@@ -49,6 +52,7 @@ namespace Octopus_cli.src
             if (!root.TryGetProperty(gameAppId.ToString(), out var appNode) ||
                 appNode.ValueKind != JsonValueKind.Object)
             {
+                logger.Write("[Steam] No data for AppID" + gameAppId);
                 Console.WriteLine($"[Steam] No data for AppID {gameAppId}");
                 return Array.Empty<int>();
             }
@@ -56,6 +60,7 @@ namespace Octopus_cli.src
             if (!appNode.TryGetProperty("success", out var successNode) ||
                 successNode.ValueKind != JsonValueKind.True)
             {
+                logger.Write("[Steam] success=false for AppID " + gameAppId);
                 Console.WriteLine($"[Steam] success=false for AppID {gameAppId}");
                 return Array.Empty<int>();
             }
@@ -69,6 +74,7 @@ namespace Octopus_cli.src
             if (!dataNode.TryGetProperty("dlc", out var dlcArray) ||
                 dlcArray.ValueKind != JsonValueKind.Array)
             {
+                logger.Write("[Steam] No DLC field for AppID " + gameAppId);
                 Console.WriteLine($"[Steam] No DLC field for AppID {gameAppId}");
                 return Array.Empty<int>();
             }

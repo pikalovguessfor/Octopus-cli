@@ -22,7 +22,7 @@ namespace Octopus_cli.src
         public void Write(string message) 
         {
             StreamWriter sw = new StreamWriter(_PathToLog);
-            sw.WriteLine(message);
+            sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss ") + message); 
             sw.Close();
         }
 
